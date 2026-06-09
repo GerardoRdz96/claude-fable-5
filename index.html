@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Fable 5 — The most capable model Anthropic has released to the public</title>
+<meta name="description" content="An independent, fact-checked explainer on Claude Fable 5 — Anthropic's first publicly available Mythos-class model, released June 9, 2026. What it is, how it relates to Mythos 5 and Project Glasswing, its safety architecture, benchmarks, pricing, and why it matters for AI engineering teams.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0EEE6;
+    --surface:#FBFAF6;
+    --surface-2:#F6F4EC;
+    --ink:#1A1915;
+    --ink-soft:#52514A;
+    --ink-faint:#86847A;
+    --coral:#CC785C;
+    --coral-deep:#B85C3E;
+    --line:#E2DECF;
+    --line-soft:#EBE7DA;
+    --slate:#3D4A4A;
+    --good:#5B7A5B;
+    --warn:#B07A2E;
+    --serif:'Newsreader', Georgia, 'Times New Roman', serif;
+    --sans:'Inter', ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --maxw:760px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:18px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* top bar */
+  .topbar{
+    border-bottom:1px solid var(--line);
+    background:rgba(240,238,230,.85);
+    backdrop-filter:saturate(140%) blur(8px);
+    position:sticky;top:0;z-index:20;
+  }
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:16px;padding-bottom:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-.01em;font-size:17px}
+  .spark{width:22px;height:22px;flex:0 0 auto;color:var(--coral)}
+  .brand .by{color:var(--ink-faint);font-weight:500}
+  .tag{font-size:12.5px;color:var(--ink-faint);font-weight:600;text-transform:uppercase;letter-spacing:.09em}
+
+  /* hero */
+  header.hero{padding:64px 0 8px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--coral-deep);text-transform:uppercase;letter-spacing:.13em;margin-bottom:22px}
+  .eyebrow::before{content:"";width:26px;height:1.5px;background:var(--coral)}
+  h1{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:clamp(40px,7vw,68px);
+    line-height:1.02;
+    letter-spacing:-.02em;
+    margin-bottom:24px;
+  }
+  h1 em{font-style:italic;color:var(--coral-deep)}
+  .lede{font-size:clamp(19px,2.4vw,22px);line-height:1.6;color:var(--ink-soft);max-width:640px;font-family:var(--serif)}
+  .byline{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;
+    margin-top:34px;padding-top:24px;border-top:1px solid var(--line);
+    font-size:14.5px;color:var(--ink-soft);
+  }
+  .byline .who{display:flex;align-items:center;gap:9px}
+  .avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;flex:0 0 auto}
+  .avatar.g{background:linear-gradient(135deg,#CC785C,#B85C3E)}
+  .avatar.s{background:linear-gradient(135deg,#3D4A4A,#5a6b6b)}
+  .byline b{color:var(--ink);font-weight:600}
+  .byline .role{color:var(--ink-faint)}
+  .byline .dot{color:var(--line);}
+  .byline .date{margin-left:auto;color:var(--ink-faint);font-variant-numeric:tabular-nums}
+
+  /* hero image */
+  figure{margin:40px 0}
+  figure img{width:100%;height:auto;display:block;border-radius:14px;border:1px solid var(--line)}
+  figcaption{font-size:13.5px;color:var(--ink-faint);margin-top:12px;line-height:1.5;font-style:italic}
+
+  /* tldr */
+  .tldr{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:3px solid var(--coral);
+    border-radius:12px;
+    padding:26px 28px;
+    margin:8px 0 16px;
+  }
+  .tldr h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--coral-deep);margin-bottom:12px;font-family:var(--sans);font-weight:700}
+  .tldr p{font-size:17px;color:var(--ink-soft);line-height:1.65}
+  .tldr p + p{margin-top:12px}
+
+  /* sections */
+  section{padding:42px 0;border-bottom:1px solid var(--line-soft)}
+  section:last-of-type{border-bottom:none}
+  h2.sec{font-family:var(--serif);font-weight:500;font-size:clamp(27px,4vw,36px);letter-spacing:-.015em;line-height:1.12;margin-bottom:8px}
+  .kicker{font-size:13px;font-weight:700;color:var(--coral-deep);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px}
+  section p{margin-bottom:18px;color:var(--ink-soft)}
+  section p strong{color:var(--ink);font-weight:600}
+  a{color:var(--coral-deep);text-decoration:none;border-bottom:1px solid rgba(204,120,92,.35);transition:border-color .15s}
+  a:hover{border-color:var(--coral-deep)}
+
+  ul.clean{list-style:none;margin:0 0 18px}
+  ul.clean li{position:relative;padding-left:26px;margin-bottom:12px;color:var(--ink-soft)}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:11px;width:7px;height:7px;border-radius:2px;background:var(--coral);transform:rotate(45deg)}
+  ul.clean li b{color:var(--ink);font-weight:600}
+
+  /* table */
+  .tablewrap{overflow-x:auto;margin:8px 0 18px;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:15.5px;min-width:480px}
+  thead th{background:var(--surface-2);text-align:left;padding:14px 16px;font-weight:700;color:var(--ink);font-size:13px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--line)}
+  tbody td{padding:13px 16px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr.hi td{background:rgba(204,120,92,.06)}
+  tbody td b{color:var(--ink)}
+  .num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+  .win{color:var(--coral-deep);font-weight:700}
+
+  /* callout */
+  .note{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:8px 0 18px;font-size:15px;color:var(--ink-soft);line-height:1.6;
+  }
+  .note .ic{flex:0 0 auto;width:22px;height:22px;color:var(--warn);margin-top:1px}
+  .note.flag .ic{color:var(--warn)}
+  .note b{color:var(--ink)}
+
+  /* diagram */
+  .diagram{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 22px;margin:8px 0 18px}
+  .diagram svg{width:100%;height:auto;display:block}
+  .diagram .cap{font-size:13px;color:var(--ink-faint);text-align:center;margin-top:14px;font-style:italic}
+
+  /* timeline */
+  .timeline{margin:8px 0 8px;position:relative;padding-left:8px}
+  .tl-item{position:relative;padding-left:30px;padding-bottom:22px;border-left:2px solid var(--line)}
+  .tl-item:last-child{border-left-color:transparent;padding-bottom:0}
+  .tl-dot{position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--coral)}
+  .tl-item.now .tl-dot{background:var(--coral)}
+  .tl-date{font-size:12.5px;font-weight:700;color:var(--coral-deep);text-transform:uppercase;letter-spacing:.06em}
+  .tl-body{font-size:15.5px;color:var(--ink-soft);margin-top:3px}
+  .tl-body b{color:var(--ink)}
+
+  /* stat row */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 20px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 18px;text-align:center}
+  .stat .big{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--coral-deep);line-height:1;letter-spacing:-.01em}
+  .stat .lbl{font-size:12.5px;color:var(--ink-faint);margin-top:8px;line-height:1.4}
+
+  /* sources */
+  .sources{font-size:14.5px}
+  .sources ol{margin:8px 0 0;padding-left:22px}
+  .sources li{margin-bottom:9px;color:var(--ink-soft);line-height:1.5}
+  .sources .q{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:1px 7px;border-radius:5px;margin-right:7px;vertical-align:1px}
+  .q.primary{background:rgba(91,122,91,.15);color:#456245}
+  .q.press{background:rgba(61,74,74,.12);color:#3D4A4A}
+
+  /* footer */
+  footer{padding:46px 0 64px;color:var(--ink-faint);font-size:13.5px;line-height:1.65}
+  footer .authors{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:22px}
+  footer .who{display:flex;align-items:center;gap:10px;color:var(--ink-soft)}
+  footer .who b{color:var(--ink)}
+  footer .disclaimer{border-top:1px solid var(--line);padding-top:20px;margin-top:6px}
+  .method{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:24px;font-size:14px;color:var(--ink-soft);line-height:1.6}
+  .method b{color:var(--ink)}
+
+  @media (max-width:560px){
+    body{font-size:17px}
+    .stats{grid-template-columns:1fr;gap:10px}
+    .byline .date{margin-left:0;width:100%}
+    header.hero{padding:40px 0 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <svg class="spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c.4 4.8 1.4 7.6 3.5 9.7S20.2 12.6 24 12c-3.8.4-6.4 1.4-8.5 3.5S12.4 19.2 12 24c-.4-4.8-1.4-7.6-3.5-9.7S3.8 11.4 0 12c3.8-.4 6.4-1.4 8.5-3.5S11.6 4.8 12 0z"/></svg>
+      <span>Claude <span class="by">· Fable&nbsp;5</span></span>
+    </div>
+    <span class="tag">Field Note</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">Anthropic · Model Release · June 9, 2026</span>
+    <h1>Claude <em>Fable 5</em> is here — the most capable model Anthropic has ever opened to the public</h1>
+    <p class="lede">A plain-English, fact-checked briefing on what shipped today, how the new safety design actually works, what it costs, and what it changes for engineering teams.</p>
+
+    <div class="byline">
+      <span class="who"><span class="avatar g">G</span><span><b>Gera Rodríguez</b> <span class="role">· Author · R&amp;D Engineer, SoftServe</span></span></span>
+      <span class="who"><span class="avatar s">S</span><span><b>Servy</b> <span class="role">· Co-author · Claude (Opus 4.8)</span></span></span>
+      <span class="date">Published 2026-06-09</span>
+    </div>
+  </header>
+
+  <figure>
+    <img src="hero.png" alt="A glowing coral crystalline form held inside a translucent geodesic dome — capability contained by safety.">
+    <figcaption>The whole story in one image: a model powerful enough to glow, deliberately held inside a lattice. Fable 5 is the public, guard-railed face of Anthropic's most capable model. <span style="color:var(--ink-faint)">Illustration generated with GPT-Image-2.</span></figcaption>
+  </figure>
+
+  <div class="tldr">
+    <h2>The 30-second version</h2>
+    <p><strong>Claude Fable 5</strong> launched today, June 9, 2026 — the first publicly available model in Anthropic's new <strong>Claude 5</strong> line, and the most capable model they've ever made generally available.</p>
+    <p>It's the same underlying model as <strong>Claude Mythos 5</strong> (also out today), but "made safe for general use." When you ask about cybersecurity, biology/chemistry, or model distillation, a classifier quietly routes that response to the older <strong>Claude Opus 4.8</strong> instead. That fallback fires in <strong>under 5% of sessions</strong>. Those same guardrails are what finally made a model this powerful safe to release widely.</p>
+    <p>It costs <strong>$10 / $50 per million tokens</strong> (double Opus 4.8), is on the API today, and is <strong>free on Pro/Max/Team plans only through June 22</strong>.</p>
+  </div>
+
+  <!-- 1 -->
+  <section>
+    <div class="kicker">1 · What it is</div>
+    <h2 class="sec">The first Claude 5, and a new capability ceiling</h2>
+    <p>Anthropic describes Fable 5 as <strong>"a Mythos-class model that we've made safe for general use,"</strong> with capabilities that <strong>"exceed those of any model we've ever made generally available."</strong> Until today, the strongest model the public could touch was Claude Opus 4.8. Fable 5 raises that ceiling.</p>
+    <p>Anthropic reports it is <strong>state-of-the-art on nearly all tested benchmarks</strong>, with standout strength in software engineering, knowledge work, vision, and scientific research — and a consistent pattern: <strong>the longer and more complex the task, the larger Fable 5's lead</strong> over other models. Its API model id is <code style="background:var(--surface-2);padding:2px 7px;border-radius:5px;font-size:15px">claude-fable-5</code>.</p>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <div class="kicker">2 · Fable vs. Mythos</div>
+    <h2 class="sec">Two names, one model — and a leash</h2>
+    <p>This is the part worth getting right. <strong>Fable 5 and Mythos 5 are the same underlying model.</strong> The difference is who's holding the controls:</p>
+    <ul class="clean">
+      <li><b>Claude Fable 5</b> — the public version. Guardrails on. Available to everyone via the API and apps.</li>
+      <li><b>Claude Mythos 5</b> — the same model with safeguards <b>lifted in some areas</b> (specifically cybersecurity and biology). Restricted to a small group of vetted cyberdefenders and infrastructure providers through <b>Project Glasswing</b>, in collaboration with the US Government, as an upgrade to the earlier Mythos Preview.</li>
+    </ul>
+    <p>One outlet summed it up neatly: Fable is <strong>"Mythos on a leash."</strong> The Mythos family had shown a near-superhuman ability to find and chain together cyber vulnerabilities — capable enough that it stayed behind closed doors for months. Fable 5 is how that capability reaches the rest of us safely.</p>
+
+    <figure>
+      <img src="glasswing.png" alt="A translucent glasswing butterfly illustrated as a natural-history plate in coral and cream.">
+      <figcaption>Project Glasswing borrows its name from a butterfly with transparent wings — fitting for a program built on responsible disclosure. Mythos 5 lives here; Fable 5 is its public sibling. <span style="color:var(--ink-faint)">Illustration generated with GPT-Image-2.</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- 3 -->
+  <section>
+    <div class="kicker">3 · The safety architecture</div>
+    <h2 class="sec">How the guardrail actually works</h2>
+    <p>Most "safety" is a model refusing. Fable 5 does something more interesting: it <strong>hands the hard cases to a weaker model</strong>. Classifiers watch every request. If one looks like it touches cybersecurity, biology and chemistry, or distillation (including jailbreak attempts), the response is generated by <strong>Claude Opus 4.8 instead of Fable 5</strong> — and you're told when it happens.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 260" role="img" aria-label="Flow diagram: a request hits Fable 5's classifier; safe requests get a full Fable 5 answer, high-risk requests fall back to Opus 4.8.">
+        <defs>
+          <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#86847A"/></marker>
+          <marker id="arrc" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#CC785C"/></marker>
+        </defs>
+        <!-- request -->
+        <rect x="14" y="104" width="120" height="52" rx="10" fill="#F6F4EC" stroke="#E2DECF"/>
+        <text x="74" y="128" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#1A1915">Your</text>
+        <text x="74" y="146" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#1A1915">request</text>
+        <line x1="134" y1="130" x2="196" y2="130" stroke="#86847A" stroke-width="2" marker-end="url(#arr)"/>
+        <!-- classifier -->
+        <rect x="200" y="96" width="150" height="68" rx="10" fill="#FBFAF6" stroke="#CC785C" stroke-width="2"/>
+        <text x="275" y="124" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#1A1915">Classifier</text>
+        <text x="275" y="143" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" fill="#52514A">risk check</text>
+        <!-- safe path -->
+        <path d="M350 116 C 410 116, 420 60, 486 60" fill="none" stroke="#86847A" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="408" y="50" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" font-weight="600" fill="#5B7A5B">safe · ~95%</text>
+        <rect x="490" y="34" width="136" height="52" rx="10" fill="#F6F4EC" stroke="#E2DECF"/>
+        <text x="558" y="56" text-anchor="middle" font-family="Inter,sans-serif" font-size="13.5" font-weight="700" fill="#1A1915">Fable 5</text>
+        <text x="558" y="74" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" fill="#52514A">full answer</text>
+        <!-- risky path -->
+        <path d="M350 144 C 410 144, 420 200, 486 200" fill="none" stroke="#CC785C" stroke-width="2" marker-end="url(#arrc)"/>
+        <text x="402" y="194" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" font-weight="600" fill="#B85C3E">high-risk · &lt;5%</text>
+        <rect x="490" y="174" width="136" height="52" rx="10" fill="#FBFAF6" stroke="#CC785C" stroke-width="1.5"/>
+        <text x="558" y="196" text-anchor="middle" font-family="Inter,sans-serif" font-size="13.5" font-weight="700" fill="#B85C3E">Opus 4.8</text>
+        <text x="558" y="214" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" fill="#52514A">handles it instead</text>
+      </svg>
+      <div class="cap">The fallback design: Fable 5 answers everything except a thin high-risk slice, which Opus 4.8 takes over.</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="big">&gt;95%</div><div class="lbl">of sessions run fully on Fable 5, no fallback</div></div>
+      <div class="stat"><div class="big">&lt;5%</div><div class="lbl">of sessions trigger the Opus 4.8 handoff</div></div>
+      <div class="stat"><div class="big">3</div><div class="lbl">guarded domains: cyber, bio/chem, distillation</div></div>
+    </div>
+
+    <p>Anthropic was explicit about the reasoning: <strong>"Fable 5's capabilities in areas like cybersecurity, biology and chemistry are advanced enough that we're taking a deliberately conservative approach for these topics at launch."</strong> The classifiers aren't a limitation bolted on after the fact — they're the thing that <strong>made a public release possible at all</strong>. This is the first time a model of this capability class has been judged safe enough for broad public and developer access.</p>
+
+    <div class="note flag">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      <div><b>One claim I left out.</b> Several outlets reported a "1,000+ hours of red-teaming with no universal jailbreaks found" figure. It did not survive my source verification (it traces back to secondary coverage, not a confirmed primary statement), so I'm not stating it as fact here. The verified safety facts are the ones above.</div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <div class="kicker">4 · Capabilities &amp; benchmarks</div>
+    <h2 class="sec">The numbers — with an honesty label</h2>
+    <p>Anthropic and its launch partners published strong results. <strong>Read these as vendor-reported claims, not independent benchmarks</strong> — they came from Anthropic and partners, and haven't yet been reproduced by neutral third parties.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Benchmark</th><th>Fable 5</th><th>For context</th></tr></thead>
+        <tbody>
+          <tr class="hi"><td><b>SWE-Bench Pro</b><br><span style="font-size:13px;color:var(--ink-faint)">real-world software engineering</span></td><td><span class="win">80.3%</span></td><td>GPT-5.5: 58.6% · Gemini 3.1 Pro: 54.2%</td></tr>
+          <tr><td><b>Hex</b> core analytics</td><td><span class="win">&gt;90%</span></td><td>First model ever past 90% — ~10 pts over Opus</td></tr>
+          <tr><td><b>Genspark</b> coding evals</td><td><span class="win">#1</span></td><td>Won head-to-head vs. every model tested; strongest on the hardest UI &amp; game-coding tasks</td></tr>
+          <tr><td><b>Cognition</b> FrontierCode</td><td><span class="win">Top</span></td><td>Highest score reported on the suite</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The throughline matches the headline benchmark: Fable 5 is built for <strong>long, hard, multi-step engineering and analysis work</strong> — exactly the kind of agentic tasks where weaker models lose the plot halfway through.</p>
+  </section>
+
+  <!-- 5 -->
+  <section>
+    <div class="kicker">5 · Pricing</div>
+    <h2 class="sec">Twice the price of Opus 4.8</h2>
+    <p>Power has a price tag. Fable 5 and Mythos 5 both cost <strong>$10 per million input tokens and $50 per million output tokens</strong> — exactly double Opus 4.8's standard rate, but less than half what the earlier Mythos Preview cost partners.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Model</th><th>Input / 1M</th><th>Output / 1M</th></tr></thead>
+        <tbody>
+          <tr class="hi"><td><b>Claude Fable 5</b> <span style="color:var(--ink-faint);font-size:13px">(= Mythos 5)</span></td><td class="num">$10</td><td class="num">$50</td></tr>
+          <tr><td>Claude Opus 4.8 <span style="color:var(--ink-faint);font-size:13px">(standard)</span></td><td class="num">$5</td><td class="num">$25</td></tr>
+          <tr><td>Claude Mythos Preview <span style="color:var(--ink-faint);font-size:13px">(prior, partner)</span></td><td class="num">&gt; $20</td><td class="num">&gt; $100</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Press coverage also noted the usual levers apply: a <strong>~90% prompt-caching discount</strong> on cached input, and US-only inference at a 1.1× premium. The practical takeaway for builders is below.</p>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <div class="kicker">6 · Availability</div>
+    <h2 class="sec">How to get it — and the June 22 cliff</h2>
+    <p>Fable 5 is live <strong>today</strong> on the Claude API and consumption-based Enterprise plans. But there's a date to circle:</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-date">April 2026</div>
+        <div class="tl-body"><b>Mythos Preview</b> launches inside Project Glasswing — restricted to vetted partners.</div>
+      </div>
+      <div class="tl-item now">
+        <span class="tl-dot"></span>
+        <div class="tl-date">June 9, 2026 — today</div>
+        <div class="tl-body"><b>Fable 5 goes public</b> on the API + Enterprise; <b>Mythos 5</b> ships to Glasswing partners. Free on <b>Pro, Max, Team, and seat-based Enterprise</b> plans at no extra cost.</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-date">June 22, 2026</div>
+        <div class="tl-body">Last day Fable 5 is <b>included free</b> on those subscription plans.</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-date">June 23, 2026</div>
+        <div class="tl-body">Fable 5 is <b>removed from subscription plans</b> — using it after this requires <b>usage credits</b>. Mythos 5 stays Glasswing-only until a trusted-access program opens.</div>
+      </div>
+    </div>
+    <div class="note">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--coral-deep)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <div>If you're on Pro/Max/Team and want to try Fable 5 for free, <b>do it before June 22</b>. After that it's metered.</div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section>
+    <div class="kicker">7 · Why it matters for us</div>
+    <h2 class="sec">What this changes for engineering teams</h2>
+    <p>Beyond the launch buzz, three things are genuinely useful to internalize:</p>
+    <ul class="clean">
+      <li><b>A new tier for the hardest work.</b> The "lead grows with task length" pattern means Fable 5 earns its 2× cost specifically on long agentic builds, deep refactors, and multi-step analysis — not on quick prompts. Route deliberately: Fable for the gnarly stuff, Opus/Sonnet for the rest.</li>
+      <li><b>The fallback design is a governance pattern, not just a feature.</b> "Capable model + classifier that routes risky requests to a safer model" is a clean, reusable architecture for shipping powerful AI responsibly. It's worth borrowing when you design guardrails for customers.</li>
+      <li><b>Procurement has a clock on it.</b> The June 22 free window and the credit-based pricing after it are real planning inputs for any team standardizing on a model. Decide before the cliff, not after.</li>
+    </ul>
+    <p>The bigger signal: Anthropic just demonstrated that you can take a model powerful enough to be genuinely dangerous and still release it broadly — <strong>if the safety system is good enough</strong>. That's the same bet every team deploying agentic AI is making at smaller scale.</p>
+  </section>
+
+  <!-- sources -->
+  <section class="sources">
+    <div class="kicker">Sources</div>
+    <h2 class="sec">Where this comes from</h2>
+    <p style="margin-bottom:8px">Every fact above rests on the official announcement plus tier-1 press. Crypto and low-quality outlets echoed the story but were never load-bearing.</p>
+    <ol>
+      <li><span class="q primary">Primary</span><a href="https://www.anthropic.com/news/claude-fable-5-mythos-5" target="_blank" rel="noopener">Anthropic — "Claude Fable 5 and Claude Mythos 5"</a></li>
+      <li><span class="q press">Press</span><a href="https://techcrunch.com/2026/06/09/anthropic-released-claude-fable-5-its-most-powerful-model-publicly-days-after-warning-ai-is-getting-too-dangerous/" target="_blank" rel="noopener">TechCrunch — Fable 5 release</a></li>
+      <li><span class="q press">Press</span><a href="https://www.cnbc.com/2026/06/09/anthropic-mythos-claude-fable-5.html" target="_blank" rel="noopener">CNBC — Mythos / Claude Fable 5</a></li>
+      <li><span class="q press">Press</span><a href="https://www.nbcnews.com/tech/security/fable-5-anthropic-release-public-mythos-claude-model-rcna349104" target="_blank" rel="noopener">NBC News — public Mythos-class release</a></li>
+      <li><span class="q press">Press</span><a href="https://www.itpro.com/technology/artificial-intelligence/anthropic-just-launched-claude-fable-5-its-first-mythos-class-ai-model-but-it-has-new-safeguards-to-prevent-misuse-and-will-fall-back-to-opus-4-8-for-high-risk-queries" target="_blank" rel="noopener">IT Pro — safeguards &amp; Opus 4.8 fallback</a></li>
+      <li><span class="q press">Press</span><a href="https://www.inc.com/ben-sherry/anthropic-just-released-claude-fable-5-mythos-class-model-to-the-public-with-key-restrictions/91357769" target="_blank" rel="noopener">Inc. — first of the Claude 5 line</a></li>
+      <li><span class="q press">Press</span><a href="https://www.securityweek.com/anthropic-launches-claude-fable-5-mythos-class-ai-with-cybersecurity-guardrails/" target="_blank" rel="noopener">SecurityWeek — cybersecurity guardrails</a></li>
+    </ol>
+  </section>
+
+  <footer>
+    <div class="method">
+      <b>How this was made.</b> Research was run through a fan-out deep-research pass — 5 search angles, 11 sources fetched, 25 factual claims extracted and put through 3-vote adversarial verification (23 confirmed, 2 killed). Benchmark figures are labeled as vendor-reported because they are. The two illustrations were generated with GPT-Image-2. Drafting and synthesis by Servy (Claude); direction, judgment, and final call by Gera.
+    </div>
+    <div class="authors">
+      <span class="who"><span class="avatar g">G</span><span><b>Gera Rodríguez</b> — Author</span></span>
+      <span class="who"><span class="avatar s">S</span><span><b>Servy</b> — Co-author (Claude, Opus 4.8)</span></span>
+    </div>
+    <div class="disclaimer">
+      Independent explainer for educational and internal-sharing purposes. <b>Not affiliated with, authored by, or endorsed by Anthropic.</b> "Claude," "Anthropic," "Fable," and "Mythos" are trademarks of Anthropic PBC; used here for identification and commentary only. Information accurate as of 2026-06-09 and subject to change — verify pricing and availability against the official announcement before relying on it.
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
