@@ -9,7 +9,7 @@ Covers what it is, how it relates to Mythos 5 and Project Glasswing, the fallbac
 ## How it was made
 - Research: a fan-out deep-research pass — 5 search angles, 11 sources, 25 claims extracted and put through 3-vote adversarial verification (23 confirmed, 2 killed). Benchmark figures are labeled vendor-reported because they are.
 - Illustrations: generated with GPT-Image-2.
-- Authored by **Gera Rodríguez** (R&D Engineer, SoftServe); co-authored by **Servy** (Claude, Opus 4.8).
+- Authored by **Gera Rodríguez** (R&D Engineer); co-authored by **Servy** (Claude, Opus 4.8).
 
 ## Disclaimer
 Independent explainer for educational and internal-sharing purposes. **Not affiliated with, authored by, or endorsed by Anthropic.** "Claude," "Anthropic," "Fable," and "Mythos" are trademarks of Anthropic PBC, used here for identification and commentary only. Information accurate as of 2026-06-09 and subject to change — verify pricing and availability against the [official announcement](https://www.anthropic.com/news/claude-fable-5-mythos-5).
